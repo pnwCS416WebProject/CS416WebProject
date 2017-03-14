@@ -1,5 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="java.io.*,javax.servlet.*,javax.servlet.http.*,java.sql.*,java.sql.Connection,java.sql.DriverManager,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Statement"%>
 
+   <!-- Course: CS 416 -->
+   <!-- Name: Drake -->
+   <!-- Iteration 1 -->
+   
 <!--
 Home page
 -->
@@ -66,7 +70,7 @@ margin-right:10%;
 <%try
 {
    DriverManager.registerDriver(new org.postgresql.Driver());
-   Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/database");
+   Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/web?user=postgres&password=a");
    PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) " + 
                                                        "FROM Professor");
    ResultSet resultSet = statement.executeQuery();
@@ -84,9 +88,9 @@ margin-right:10%;
 <%try
 {
    DriverManager.registerDriver(new org.postgresql.Driver());
-   Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/database");
+   Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/web?user=postgres&password=a");
    PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) " + 
-                                                       "FROM Courses");
+                                                       "FROM Course");
    ResultSet resultSet = statement.executeQuery();
    while (resultSet.next())
    {%>
@@ -94,6 +98,7 @@ margin-right:10%;
    <%}
 } catch (Exception ex)
 {%>
+   <%=ex.getMessage()%></br>
    <strong>There are currently 0 courses offerred at JSU.</strong>
 <%}%>
 
