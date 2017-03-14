@@ -1,10 +1,30 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="java.io.*,javax.servlet.*,javax.servlet.http.*,java.sql.*,java.sql.Connection,java.sql.DriverManager,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Statement"%>
 
+   <!-- Course: CS 416 -->
+   <!-- Name: Drake -->
+   <!-- Iteration 1 -->
+   
 <html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 
-<link rel="stylesheet" href="styles.css" type="text/css"/>
+<style type='text/css'>
+.header
+{
+text-align:right;
+background-color: #ffffff;
+}
+body
+{
+background-color: a4c5fc;
+}
+.data
+{
+background-color: #000000;
+margin-left:10%;
+margin-right:10%;
+}
+</style>
 
 <title>English</title>
 </head>
@@ -18,7 +38,7 @@
 <area href='Login.html' shape='rect' coords='810,48,1012,118' />
 </map>
 </div>
-<h1>English</h1>
+<h1>CS</h1>
 <p>English is the study of lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 <h4>Courses:</h4>
 <ul>
@@ -37,10 +57,10 @@
 <% try
 {
    DriverManager.registerDriver(new org.postgresql.Driver());
-   Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/database");
-   PreparedStatement statement = conn.prepareStatement("SELECT p.Pname, d.office " + 
+   Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/web?user=postgres&password=a");
+   PreparedStatement statement = conn.prepareStatement("SELECT p.name, d.office " + 
                                                        "FROM Dept d,Professor p " +
-                                                       "WHERE d.Dname = 'English' AND d.ssn = p.ssn");
+                                                       "WHERE d.Dname = 'Department of English' AND d.ssn = p.ssn");
    ResultSet resultSet = statement.executeQuery();
    while (resultSet.next())
    {%>
@@ -49,6 +69,7 @@
    <%}
 } catch (Exception ex)
 {%>
+   <%=ex.getMessage()%></br>
    <strong>Department Head: Dr. Strangelove</strong>
    <strong>Department Office: Room 815</strong>
 <%}%>
