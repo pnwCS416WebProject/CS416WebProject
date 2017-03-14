@@ -42,7 +42,7 @@ background-color: #D9DAB8;
    try
    {
       DriverManager.registerDriver(new org.apache.derby.jdbc.ClientDriver());
-      Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/web?user=postgres&password=a");
+      Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/web?user=postgres&password=a");
       PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) " +
                                                           "FROM Undergraduate " +
                                                           "WHERE lower(email)='" + request.getParameter("email") + "' AND password='" + request.getParameter("pass") + "'");
