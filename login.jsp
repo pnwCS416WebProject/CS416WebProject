@@ -4,7 +4,6 @@ javax.servlet.http.*,java.sql.*,java.sql.Connection,java.sql.DriverManager,java.
 <html>
 <head>
     <title>Login</title>
-
     <style type='text/css'>
         .login
         {
@@ -13,7 +12,7 @@ javax.servlet.http.*,java.sql.*,java.sql.Connection,java.sql.DriverManager,java.
             margin-top:20%;
             margin-left:10%;
             margin-right:10%;
-            background-color: #808040;
+            background-color: #66ccff;
         }
         .f1
         {
@@ -21,12 +20,13 @@ javax.servlet.http.*,java.sql.*,java.sql.Connection,java.sql.DriverManager,java.
             background-color: #D9DAB8;
         }
     </style>
+
 </head>
 
 <body>
 <%
     String login = "";
-    if ( !(request.getParameter("email") == null) )
+    if ( !(request.getParameter("email") == null) ) //if
     {
         login = request.getParameter("email");
     }
@@ -34,7 +34,7 @@ javax.servlet.http.*,java.sql.*,java.sql.Connection,java.sql.DriverManager,java.
 %>
 <div class='login'>
     <%
-    if ( !(request.getParameter("fail") == null ) )
+    if ( !(request.getParameter("fail") == null ) )  //if login failed
     {%>
         <span class="error"><p>Login failed.</p></span>
   <%}%>
@@ -47,7 +47,7 @@ javax.servlet.http.*,java.sql.*,java.sql.Connection,java.sql.DriverManager,java.
         <input type='submit' value='login' name='login'>
         <br/></form>
 <%
-if (request.getParameter("login")!= null)
+if (request.getParameter("login")!= null) //code below only executes upon hitting submit button
 {
 
    try
@@ -76,27 +76,38 @@ if (request.getParameter("login")!= null)
       ResultSet resultSet2 = statement1.executeQuery();
 
 
-      if ( resultSet.next() )
+      if ( resultSet.next() ) //if student logged in
       {
          String sid = "";
          Integer temp = resultSet.getInt("sid");
          sid = temp.toString();
-         Cookie cookie = new Cookie("sid",temp.toString());
-         cookie.setMaxAge(24*60*60*30);
+         Cookie cookie = new Cookie("WebSid",temp.toString()); //set cookie to student's sid
+         cookie.setMaxAge(24*60*60); //set cookie for 24 hours
          cookie.setPath("/");
          response.addCookie(cookie);
          response.sendRedirect("studentHome.jsp?sid=" + sid);
       }
-      else if ( resultSet2.next() )
+      else if ( resultSet2.next() ) //if faculty logged in
       {
           String email = resultSet2.getString("email").trim();
-          Cookie cookie = new Cookie("email", email);
-          cookie.setMaxAge(24*60*60*30);
-          cookie.setPath("/");
-          response.addCookie(cookie);
-          response.sendRedirect("professorHome.jsp?email=" + email);
+
+          if ( email.equals("admin@jsu.edu") ) //if faculty person is admin
+          {
+              response.sendRedirect("adminHome.jsp?email=" + email);
+
+          }
+          else //log in as professor
+          {
+              Cookie cookie = new Cookie("WebEmail", email);
+              cookie.setMaxAge(24*60*60); //set cookie for 24 hours
+              cookie.setPath("/");
+              response.addCookie(cookie);
+              response.sendRedirect("professorHome.jsp?email=" + email);
+          }
+
+
       }
-      else
+      else //wrong login details
       {
         response.sendRedirect("login.jsp?fail=1");
 

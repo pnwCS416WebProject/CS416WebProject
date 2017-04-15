@@ -7,7 +7,7 @@ java.sql.DatabaseMetaData"%>
 
 <html>
 <head>
-    <link rel="stylesheet" href="Styles.css" type="text/css"/>
+    <link rel="stylesheet" href="bootstrap.css" type="text/css"/>
 </head>
 <body>
 <div class="header">

@@ -6,12 +6,40 @@ java.sql.DatabaseMetaData"%>
 <html>
 <head>
     <title> Student Homepage </title>
+    <link rel="stylesheet" href="bootstrap.css" type="text/css"/>
 </head>
 <body>
-<%if ( !(request.getParameter("sid") == null) )
+
+<%  //there are only two ways to gain access to this page: by active cookie or logging in directly from login page
+
+    String logout = "student";
+    Cookie[] cookie = null;
+    String sid = null;
+    cookie = request.getCookies();
+    if( cookie != null )
+    {
+      for (int i = 0; i < cookie.length; i++)
+      {
+          if ( cookie[i].getName().equals("WebSid") )
+          {
+              sid = cookie[i].getValue().trim();
+          }
+      }
+    }
+    if ( !(request.getParameter("sid") == null) || !(sid == null) )//if student wasn't sent here from login pg or doesn't have active cookie
 {%>
 <div class="studentInfo">
     <%
+        if ( !(request.getParameter("sid") == null) ) //if user accessed page by logging in
+        {
+            sid = request.getParameter("sid").trim();
+        }
+        else
+        {
+            //user successfully accessed page directly through active session cookie
+            //which was set above through request.getCookies()
+        }
+
         try
         {
             Class.forName("org.postgresql.Driver");
@@ -30,7 +58,7 @@ java.sql.DatabaseMetaData"%>
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             Statement st2 = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             String getStudentInfo = "SELECT u.name, u.sid, u.age, u.address, u.email, u.deg_prog, u.advsid, u.level "
-                                 + "FROM Undergraduate u WHERE u.sid = " + request.getParameter("sid");
+                                 + "FROM Undergraduate u WHERE u.sid = " + sid;
 
             String year = "";
             ResultSet rs = st.executeQuery(getStudentInfo);
@@ -68,9 +96,21 @@ java.sql.DatabaseMetaData"%>
                     {                                                                                     //then they haven't been assigned an
                         advisorName = "Please select your major to be assigned an advisor";               //advisor yet, as freshman are
                         advisorEmail = "";                                                                //made their own advisors before
-                    }                                                                                     //declaring a major
+                    }                                                                                     //declaring a major, and if student
+                                                                                                          // is not a senior, as seniors aren't
+                                                                                                          // supposed to have an advisor
                 }
           %>
+    <em><h4>Student Portal:</h4></em>
+    <div class="header">
+        <img src="Navigation.png" usemap="#nav"/>
+        <map name="nav" id="">
+            <area href="studentHome.jsp" shape="rect" coords="109,47,322,121" />
+            <area href="projects.jsp" shape="rect" coords="340,47,552,120" />
+            <area href="acedemics.jsp" shape="rect" coords="571,46,790,119" />
+            <area href="logout.jsp?&logout=<%=logout%>" shape="rect" coords="810,48,1012,118" />
+        </map>
+    </div>
                 <h2 align="center"><%=rs.getString("name").substring(0, rs.getString("name").indexOf(" "))%>'s Homepage</h2>
                 <h4>Student Info:</h4>
                 <p><strong>Name:</strong> <%=rs.getString("name")%> </p>
@@ -117,8 +157,7 @@ java.sql.DatabaseMetaData"%>
     %>
 </div>
 <div class="courses">
-<h1 align="right"> Course List: </h1>
-<% String searchCondition = request.getParameter("sid");
+<% String searchCondition = sid;
     if (searchCondition != null)
     {%>
 <B> <%= getCourseList(searchCondition) %> </B> <HR><BR>
@@ -130,7 +169,7 @@ java.sql.DatabaseMetaData"%>
 </div>
 <%
 }
-else // user tried accessing homepage without logging in
+else //user tried accessing homepage without logging in or having active cookie from previous login
 {%>
     <p>Please <a href="login.jsp">login</a> first to access your homepage.</p>
 <%
@@ -162,12 +201,12 @@ else // user tried accessing homepage without logging in
     try
     {
         System.out.println("here");
-        //DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+
         conn = DriverManager.getConnection(login,
                 user, pass);
         stmt = conn.createStatement();
         // dynamic query
-        rset = stmt.executeQuery ("SELECT C.cid, C.name, C.room, C.dno FROM enrolled_in E, course C WHERE E.sid = "
+        rset = stmt.executeQuery ("SELECT C.cid, C.name, C.dno, C.room, C.semester FROM enrolled_in E, course C WHERE E.sid = "
                                    + sid + " AND E.cid = C.cid");
         return (formatResult(rset));
     }
@@ -188,13 +227,49 @@ else // user tried accessing homepage without logging in
         if (!rset.next())
             sb.append("<P align=\"right\"> You are not currently enrolled in any courses.<P>\n");
         else
-        {  sb.append("<table border=\"2px\" align=\"right\">"
+        {
+            String semester = rset.getString("semester").trim();
+            if ( semester.equals("FA") )
+            {
+                semester = "Fall ";
+            }
+            else
+            {
+                semester = "Spring ";
+            }
+            Date dNow = new Date( );
+            SimpleDateFormat ft = new SimpleDateFormat("yyyy");
+            String date = ft.format(dNow);
+            semester += date + " Student Schedule:";
+
+            String day[] = new String[5];
+            day[0] = "MW";
+            day[1] = "TR";
+            day[2] = "MW";
+            day[3] = "TR";
+            day[4] = "F";
+            String time[] = new String[5];
+            time[0] = "9:00-10:15 A.M.";
+            time[1] = "9:00-10:15 A.M.";
+            time[2] = "10:30-11:45 A.M.";
+            time[3] = "10:30-11:45 A.M.";
+            time[4] = "12:30-3:15 P.M.";
+            int i = 0;
+
+
+            sb.append("<h1 align=\"right\">" + semester + "</h1>" +
+                "<table border=\"2px\" align=\"right\">"
                          + "<tr><th>" + "course number " + "</th>"
-                         + "<th>" + "course name" + "</th>" + "<th>" + "room number" + "</th>"
-                         + "<th>" + "department number" + "</th>" + "</tr>");
-            do {  sb.append("<tr><td>" + rset.getInt(1) + "</td>" + "<td>" + rset.getString(2)
-                  + "</td>" + "<td>" + rset.getString(3) + "</td>" + "<td>"
-                  + rset.getInt(4) + "</td>" + "<tr>");
+                         + "<th>" + "course name" + "</th>" + "<th>" + "department number" + "</th>"
+                         + "<th>" + "room number" + "</th>" + "<th>" + "Day" + "</th>" +
+                         "<th>" + "time" + "</th>" + "</tr>");
+            do
+            {
+                sb.append("<tr><td>" + rset.getInt(1) + "</td>" + "<td>" + rset.getString(2)
+                  + "</td>" + "<td>" + rset.getInt(3) + "</td>" + "<td>"
+                  + rset.getString(4) + "</td>" + "<td>" + day[i] + "</td>" +
+                  "<td>" + time[i] + "</td>" + "<tr>");
+                i++;
             } while (rset.next());
             sb.append("</table>");
         }

@@ -7,7 +7,7 @@ java.sql.DatabaseMetaData"%>
 <html>
 <head>
     <title>Account Creation</title>
-    <link rel="stylesheet" href="Styles.css" type="text/css"/>
+    <link rel="stylesheet" href="bootstrap.css" type="text/css"/>
 </head>
 <body>
 
@@ -16,11 +16,11 @@ java.sql.DatabaseMetaData"%>
     <map name="nav" id="">
         <area href="home.jsp" shape="rect" coords="109,47,322,121" />
         <area href="enroll.jsp" shape="rect" coords="340,47,552,120" />
-        <area href="Majors.html" shape="rect" coords="571,46,790,119" />
-        <area href="Login.html" shape="rect" coords="810,48,1012,118" />
+        <area href="majors.jsp" shape="rect" coords="571,46,790,119" />
+        <area href="login.jsp" shape="rect" coords="810,48,1012,118" />
     </map>
 </div>
-
+<hr/>
 
 <br/><br/><br/>
 <div class="data">
@@ -29,16 +29,17 @@ java.sql.DatabaseMetaData"%>
         Please fill out the forms below. After you are finished,<br/>
         click the submit button to enroll.<br/></h1>
     <form method="post" action="enroll.jsp" onsubmit="return formValidate();">
+        <div class="form-group">
         <label>Please enter your first name:<br/></label>
-        <input type="text" name="first" id="first"><br/>
+        <input class="form-control" type="text" name="first" id="first"><br/>
         <label>Please enter your last name:<br/></label>
-        <input type="text" name="last" id="last"><br/>
+        <input class="form-control" type="text" name="last" id="last"><br/>
         <label>Please enter your age:<br/></label>
-        <input type="text" name="age" id="age"><br/>
+        <input class="form-control" type="text" name="age" id="age"><br/>
         <label>Please enter your Street Address:</label><br/>
-        <input type="text" name="street" id="street"><br/>
+        <input class="form-control" type="text" name="street" id="street"><br/>
         <label>Please enter the city:</label><br/>
-        <input type="text" name="city" id="city"><br/>
+        <input class="form-control" type="text" name="city" id="city"><br/>
         <label>Please select your state from the menu:</label><br/>
         <select name="state" id="state">
             <option value="AL">Alabama</option>
@@ -94,16 +95,16 @@ java.sql.DatabaseMetaData"%>
             <option value="WY">Wyoming</option>
         </select><br/>
         <label>Please enter the five digit zipcode:</label><br/>
-        <input type="text" name="zip" id="zip"><br/>
+        <input class="form-control" type="text" name="zip" id="zip"><br/>
         <label>Please enter your ten digit phone number without hyphens:</label><br/>
-        <input type="text" name="phone" id="phone"><br/>
+        <input class="form-control" type="text" name="phone" id="phone"><br/>
         <label>Please enter a username
             <small>(note: the name will be used for your new student email address)</small></label><br/>
-        <input type="text" name="email" id="email"><br/>
+        <input class="form-control" type="text" name="email" id="email"><br/>
         <label>Please enter a password for your account:<br/></label>
-        <input type="password" name="pass" id="pass"><br/>
-        <input type="submit" value="submit" name="enroll">
-    </form>
+        <input class="form-control" type="password" name="pass" id="pass"><br/>
+        <input class="btn btn-success" type="submit" value="submit" name="enroll"></div>
+    </form> <hr/>
     <%
         if ( request.getParameter("enroll") != null ) //code below only executes upon hitting submit
         {
