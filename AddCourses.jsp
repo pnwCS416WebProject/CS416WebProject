@@ -21,7 +21,26 @@ overflow:auto;
 
 </head>
 
-<%if (request.getParameter("course")!= null)
+   
+<%
+Cookie[] cookies = null;
+cookies = request.getCookies();
+boolean loggedIn = false;
+String sid = "";
+
+if (cookies != null)
+{
+   for (int i = 0; i < cookies.length; i+=1)
+   {
+      if (cookies[i].getName().equals("ssn"))
+      {
+         loggedIn = true;
+         sid = cookies[i].getValue();
+      }
+   }
+}
+
+if (request.getParameter("course")!= null)
 {
    try
    {
@@ -35,9 +54,8 @@ overflow:auto;
       if (resultSet.getString(1).equals("1"))
       {
          /*insert into the database*/
-         statement = conn.prepareStatement("SELECT u.ssn, u.email, u.password " +
-                                           "FROM Undergraduate u" +
-                                           "WHERE lower(email) = '" + request.getParameter("email") + "' AND password = '" + request.getParameter("pass") + "'");
+         statement = conn.prepareStatement("INSERT INTO Reservation (sid,cid) VALUES (" + sid + "," +
+                                                                                          request.getParameter("course") + ");");
          resultSet = statement.executeQuery();
          resultSet.next();%>
          
@@ -69,22 +87,6 @@ Select a course you would like to enroll in.
 <select name="course">
 <%try
 {
-   Cookie[] cookies = null;
-   cookies = request.getCookies();
-   boolean loggedIn = false;
-   String sid = "";
-   
-   if (cookies != null)
-   {
-      for (int i = 0; i < cookies.length; i+=1)
-      {
-         if (cookies[i].getName().equals("ssn"))
-         {
-            loggedIn = true;
-            sid = cookies[i].getValue();
-         }
-      }
-   }
    DriverManager.registerDriver(new org.postgresql.Driver());
    Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/web?user=postgres&password=a");
    PreparedStatement statement = conn.prepareStatement("SELECT C.name C.cid " +
