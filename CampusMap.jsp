@@ -13,6 +13,23 @@
 
 <script>
 
+function face(p1, p2, p3, p4)
+{
+   this.point1 = p1;
+   this.point2 = p2;
+   this.point3 = p3;
+   this.point4 = p4;
+}
+
+
+
+function point(x,y,z)
+{
+   this.x = x;
+   this.y = y;
+   this.z = z;
+}
+
 function buildBuildingModel()
 {
    var buildingModel = [];
